@@ -204,12 +204,14 @@ function applyLang(lang) {
   localStorage.setItem("vc-lang", lang);
   document.documentElement.lang = lang;
 
+  // Explicit allowlist of keys whose values may contain safe HTML markup (<strong>)
+  const HTML_KEYS = new Set(["about.p1", "about.p2", "about.p3"]);
+
   document.querySelectorAll("[data-i18n]").forEach(el => {
     const key = el.getAttribute("data-i18n");
     const val = i18n[lang][key];
     if (val === undefined) return;
-    // Use innerHTML only for keys explicitly using HTML (<strong> etc.)
-    if (val.includes("<")) {
+    if (HTML_KEYS.has(key)) {
       el.innerHTML = val;
     } else {
       el.textContent = val;
